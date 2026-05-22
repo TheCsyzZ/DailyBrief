@@ -6,7 +6,7 @@ import type {
 } from "../ai/pipeline";
 import type { WatchlistPick } from "../ai/trading-commentary";
 import { REPORT_LOCALE } from "../sources/registry";
-import { REPORT_TZ } from "../utils";
+import { getReportTz } from "../utils";
 import type { Category, SourceDef } from "../sources/types";
 import { V2EX_OFF_TOPIC_RE } from "../sources/v2ex";
 import type { TickerAnalysis } from "../trading/signals";
@@ -417,7 +417,7 @@ function formatDate(d: Date | undefined): string {
     // zh: "05/20 16:00"  · en: "May 20, 4:00 PM" → keep 24h en-GB style "20/05 16:00"
     const localeTag = REPORT_LOCALE === "en" ? "en-GB" : "zh-CN";
     return d.toLocaleString(localeTag, {
-      timeZone: REPORT_TZ,
+      timeZone: getReportTz(),
       month: "2-digit",
       day: "2-digit",
       hour: "2-digit",
