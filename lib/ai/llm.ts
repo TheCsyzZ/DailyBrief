@@ -10,6 +10,7 @@
  *   LLM_BACKEND=openai       (OpenAI Chat Completions)
  *   LLM_BACKEND=deepseek     (DeepSeek, OpenAI-compatible)
  *   LLM_BACKEND=minimax      (MiniMax, OpenAI-compatible)
+ *   LLM_BACKEND=zhipu        (Zhipu AI / 智谱, OpenAI-compatible)
  *
  * Per-backend config (API keys, models, base URLs) lives in .env.local.
  * See .env.example for the full list.
@@ -22,6 +23,7 @@ import {
   openaiCompatModel,
   runOpenAICompat,
 } from "./backends/openai-compat";
+import { zhipuModel, runZhipu } from "./backends/zhipu";
 
 export interface LlmRunOptions {
   systemPrompt: string;
@@ -39,7 +41,8 @@ export type LlmBackendId =
   | "anthropic"
   | "openai"
   | "deepseek"
-  | "minimax";
+  | "minimax"
+  | "zhipu";
 
 const VALID_BACKENDS: ReadonlySet<LlmBackendId> = new Set([
   "claude-cli",
@@ -47,6 +50,7 @@ const VALID_BACKENDS: ReadonlySet<LlmBackendId> = new Set([
   "openai",
   "deepseek",
   "minimax",
+  "zhipu",
 ]);
 
 export function getBackend(): LlmBackendId {
@@ -70,6 +74,8 @@ function getActiveModel(): string {
       return CLAUDE_MODEL;
     case "anthropic":
       return anthropicModel();
+    case "zhipu":
+      return zhipuModel();
     case "openai":
     case "deepseek":
     case "minimax":
@@ -89,6 +95,8 @@ export async function runLlm(opts: LlmRunOptions): Promise<LlmRunResult> {
       return runClaudeCli(opts);
     case "anthropic":
       return runAnthropic(opts);
+    case "zhipu":
+      return runZhipu(opts);
     case "openai":
     case "deepseek":
     case "minimax":
